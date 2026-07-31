@@ -21,8 +21,6 @@ body {
     background: #050a12;
 }
 
-/* HEADER */
-
 header {
     height: 80px;
     display: flex;
@@ -45,18 +43,15 @@ header p {
     margin-top: 4px;
 }
 
-/* REACTOR */
-
 .reactor {
     width: 42px;
     height: 42px;
     border-radius: 50%;
     border: 3px solid #28bfff;
-    box-shadow: 0 0 10px #28bfff,
-                0 0 25px #0879ff;
+    box-shadow:
+        0 0 10px #28bfff,
+        0 0 25px #0879ff;
 }
-
-/* STATUS */
 
 .status {
     margin-left: auto;
@@ -72,8 +67,6 @@ header p {
     border-radius: 50%;
     margin-right: 5px;
 }
-
-/* CHAT */
 
 #chat {
     flex: 1;
@@ -97,6 +90,7 @@ header p {
     padding: 14px 16px;
     border-radius: 10px;
     line-height: 1.5;
+    white-space: pre-wrap;
 }
 
 .jarvis-message .bubble {
@@ -117,8 +111,6 @@ header p {
     background: #10251e;
     border-right: 3px solid #52ffae;
 }
-
-/* INPUT */
 
 .input-area {
     display: flex;
@@ -157,7 +149,10 @@ header p {
     background: #20baff;
 }
 
-/* MOBILE */
+#send:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
 
 @media (max-width: 600px) {
 
