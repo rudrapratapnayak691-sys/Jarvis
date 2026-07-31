@@ -1,4 +1,3 @@
-
 const express = require("express");
 const cors = require("cors");
 const OpenAI = require("openai");
@@ -8,19 +7,16 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 
-// OpenAI client
 const client = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
 
 
-// Middleware
 app.use(cors());
 
 app.use(express.json());
 
 
-// Home route
 app.get("/", (req, res) => {
 
     res.send("JARVIS is online.");
@@ -28,7 +24,16 @@ app.get("/", (req, res) => {
 });
 
 
-// Chat route
+app.get("/health", (req, res) => {
+
+    res.json({
+        status: "online",
+        assistant: "JARVIS"
+    });
+
+});
+
+
 app.post("/chat", async (req, res) => {
 
     try {
@@ -45,28 +50,29 @@ app.post("/chat", async (req, res) => {
         }
 
 
-        const completion = await client.chat.completions.create({
+        const completion =
+            await client.chat.completions.create({
 
-            model: "gpt-4.1-mini",
+                model: "gpt-4.1-mini",
 
-            messages: [
+                messages: [
 
-                {
-                    role: "system",
+                    {
+                        role: "system",
 
-                    content:
-                    "You are JARVIS, a highly intelligent, helpful and polite personal AI assistant. Speak clearly and naturally. Address the user as sir when appropriate."
-                },
+                        content:
+                        "You are JARVIS, a highly intelligent, helpful and polite personal AI assistant. Speak naturally and clearly. Address the user as sir when appropriate. Keep answers useful and concise unless the user asks for detail."
+                    },
 
-                {
-                    role: "user",
+                    {
+                        role: "user",
 
-                    content: message
-                }
+                        content: message
+                    }
 
-            ]
+                ]
 
-        });
+            });
 
 
         const reply =
@@ -80,11 +86,16 @@ app.post("/chat", async (req, res) => {
 
     } catch (error) {
 
-        console.error("JARVIS ERROR:", error);
+        console.error(
+            "JARVIS ERROR:",
+            error
+        );
+
 
         res.status(500).json({
 
-            error: "JARVIS encountered an error."
+            error:
+            "JARVIS encountered an internal error."
 
         });
 
@@ -93,10 +104,10 @@ app.post("/chat", async (req, res) => {
 });
 
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
 
     console.log(
-        `JARVIS server running on port ${PORT}`
+        `JARVIS is running on port ${PORT}`
     );
 
 });
