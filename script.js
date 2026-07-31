@@ -8,19 +8,18 @@ const API_URL = "https://jarvis-h70w.onrender.com/chat";
 function addMessage(name, text, type) {
 
     const message = document.createElement("div");
+    message.className = "message " + type + "-message";
 
-    message.className = `message ${type}-message`;
+    const nameDiv = document.createElement("div");
+    nameDiv.className = "name";
+    nameDiv.textContent = name;
 
-    const nameElement = document.createElement("div");
-    nameElement.className = "name";
-    nameElement.textContent = name;
+    const bubble = document.createElement("div");
+    bubble.className = "bubble";
+    bubble.textContent = text;
 
-    const bubbleElement = document.createElement("div");
-    bubbleElement.className = "bubble";
-    bubbleElement.textContent = text;
-
-    message.appendChild(nameElement);
-    message.appendChild(bubbleElement);
+    message.appendChild(nameDiv);
+    message.appendChild(bubble);
 
     chat.appendChild(message);
 
@@ -28,27 +27,11 @@ function addMessage(name, text, type) {
 }
 
 
-function removeProcessingMessage() {
-
-    const messages = document.querySelectorAll(".jarvis-message");
-
-    for (let i = messages.length - 1; i >= 0; i--) {
-
-        const bubble = messages[i].querySelector(".bubble");
-
-        if (bubble && bubble.textContent === "Processing...") {
-            messages[i].remove();
-            break;
-        }
-    }
-}
-
-
 async function sendMessage() {
 
     const question = questionInput.value.trim();
 
-    if (!question) {
+    if (question === "") {
         return;
     }
 
@@ -57,6 +40,7 @@ async function sendMessage() {
     questionInput.value = "";
 
     sendButton.disabled = true;
+    sendButton.textContent = "THINKING...";
 
     addMessage("JARVIS", "Processing...", "jarvis");
 
@@ -78,48 +62,47 @@ async function sendMessage() {
         });
 
 
+        const data = await response.json();
+
+
+        // Remove Processing message
+        const jarvisMessages =
+            document.querySelectorAll(".jarvis-message");
+
+        if (jarvisMessages.length > 1) {
+            jarvisMessages[
+                jarvisMessages.length - 1
+            ].remove();
+        }
+
+
         if (!response.ok) {
 
             throw new Error(
-                `Server returned ${response.status}`
+                data.error || "Server error"
             );
 
         }
 
 
-        const data = await response.json();
-
-        removeProcessingMessage();
-
-
-        if (data.reply) {
-
-            addMessage(
-                "JARVIS",
-                data.reply,
-                "jarvis"
-            );
-
-        } else {
-
-            addMessage(
-                "JARVIS",
-                "I received an empty response from the server.",
-                "jarvis"
-            );
-
-        }
+        addMessage(
+            "JARVIS",
+            data.reply,
+            "jarvis"
+        );
 
 
     } catch (error) {
 
-        console.error("JARVIS CONNECTION ERROR:", error);
+        console.error(
+            "JARVIS ERROR:",
+            error
+        );
 
-        removeProcessingMessage();
 
         addMessage(
             "JARVIS",
-            "Connection error. Please check the JARVIS server.",
+            "⚠️ " + error.message,
             "jarvis"
         );
 
@@ -127,8 +110,7 @@ async function sendMessage() {
 
 
     sendButton.disabled = false;
-
-    questionInput.focus();
+    sendButton.textContent = "SEND";
 
 }
 
